@@ -12,6 +12,7 @@ end
 local shader_code = [[
 
     extern float iTime;
+    vec2 uvs0;
 
     vec3 palette(float t) {
         vec3 a = vec3(0.5, 0.5, 0.5);
@@ -24,20 +25,28 @@ local shader_code = [[
 
     vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords) {
         uvs = (uvs - 0.5) * 2;
-        float d = length(uvs);
+        uvs0 = uvs;
 
-        vec3 col = palette(d + iTime);
-
-        d = sin(d*8. + iTime)/8.;
-
-        d = abs(d);
-
-        d = .02 / d;
+        vec3 finalColor = vec3(0.0);
         
-        col *= d;
-        
+        for (float i = 0.0; i < 5.0; i++) {
+            uvs *= 1.3;
+            uvs = fract(uvs);
+            uvs -= 0.5;
 
-        return vec4(col, 1.0);
+            float d = length(uvs);
+
+
+            vec3 col = palette(length(uvs0) + i*.2 + iTime * .1);
+
+            d = sin(d*8. + iTime)/8.;
+            d = abs(d);
+            d = pow(0.01 / d, 2.0);
+            finalColor += col * d;
+        }
+        
+        
+        return vec4(finalColor, 1.0);
     }
 ]]
 
