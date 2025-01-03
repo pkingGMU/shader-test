@@ -13,15 +13,31 @@ local shader_code = [[
 
     extern float iTime;
 
+    vec3 palette(float t) {
+        vec3 a = vec3(0.5, 0.5, 0.5);
+        vec3 b = vec3(0.5, 0.5, 0.5);
+        vec3 c = vec3(1.0, 1.0, 1.0);
+        vec3 d = vec3(0.30, 0.20, 0.20);
+
+        return a +b*cos(6.28318*(c*t+d));
+    }
+
     vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords) {
         uvs = (uvs - 0.5) * 2;
         float d = length(uvs);
 
+        vec3 col = palette(d + iTime);
+
+        d = sin(d*8. + iTime)/8.;
+
+        d = abs(d);
+
+        d = .02 / d;
+        
+        col *= d;
         
 
-        d = smoothstep(0, 0.1, d);
-
-        return vec4(d, d, d, 1.0);
+        return vec4(col, 1.0);
     }
 ]]
 
